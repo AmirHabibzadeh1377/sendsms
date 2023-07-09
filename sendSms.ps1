@@ -1,0 +1,1 @@
+start-process -FilePath "C:\Users\C2-Teacher\source\repos\SendSms\SendSms\bin\Debug\SendSms.exe"
