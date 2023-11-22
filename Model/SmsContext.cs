@@ -5,7 +5,7 @@ namespace SendSms.Model
     public partial class SmsContext : DbContext
     {
         public SmsContext()
-            : base("name=SmsAlarmContext")
+            : base("data source=DESKTOP-CPGCT09;initial catalog=SendSms;user id=sa;password=123;MultipleActiveResultSets=True;App=EntityFramework")
         {
         }
 

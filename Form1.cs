@@ -1,13 +1,10 @@
 ﻿using Newtonsoft.Json;
-
 using RestSharp;
-
 using SendSms.Model;
-
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Windows.Forms;
 
 namespace SendSms
@@ -17,7 +14,9 @@ namespace SendSms
         #region Fields
 
         SmsContext _conection;
-        const string SMS_APIKEY = "72f3f7b27d3a48e83f40346ff0cf2ed54a8f94bbac24b266842d8c2dd0ca73cd";
+        string ghasedakApiKey = ConfigurationManager.AppSettings.Get("GhasedakApiKey");
+        string lineNumber = ConfigurationManager.AppSettings.Get("LineNumber");
+        string splitSperator = ConfigurationManager.AppSettings.Get("SpliSeperator");
 
         #endregion
 
@@ -29,7 +28,7 @@ namespace SendSms
         private void timer1_Tick(object sender, EventArgs e)
         {
             _conection = new SmsContext();
-            var entities = _conection.SMSAlarmsSendSumms.ToList();
+            var entities = _conection.SMSAlarmsSendSumms.Where(x=>!x.SMSRecievedFlag.Value).ToList();
             var smsVms = new List<SmsVm>();
             foreach (var entity in entities)
             {
@@ -38,12 +37,9 @@ namespace SendSms
                 SmsVm sms = new SmsVm
                 {
                     //this pram for test
-                    Param1 = "amir habibzadeh",
                     Param2 = entity.MessageText,
-                    Param3 = "",
                     Message = entity.MessageText,
                     Mobile = entity.RecipientMobileNo,
-                    TemplateName = Tools.SmsTemplate.ShowHomeWorkByTeacher
                 };
                 smsVms.Add(sms);
             }
@@ -51,7 +47,7 @@ namespace SendSms
             foreach (var smsVm in smsVms)
             {
                 var messageLengtj = smsVm.Message.Length;
-                var messageArray = smsVm.Message.Split('/');
+                var messageArray = smsVm.Message.Split(Convert.ToChar(splitSperator));
                 foreach (var message in messageArray)
                 {
                     smsVm.Message = message;
@@ -93,10 +89,10 @@ namespace SendSms
                 _conection = new SmsContext();
                 var restClient = new RestClient("https://api.ghasedak.me/v2/sms/send/simple");
                 var request = new RestRequest("", Method.Post);
-                request.AddHeader("apikey", SMS_APIKEY);
+                request.AddHeader("apikey", ghasedakApiKey);
                 request.AddParameter("message", smsModel.Message);
                 request.AddParameter("receptor", smsModel.Mobile);
-                request.AddParameter("linenumber", "90004917");
+                request.AddParameter("linenumber", lineNumber);
                 RestResponse response = restClient.Execute(request);
                 var model = JsonConvert.DeserializeObject<GhasedakSendResponseModel>(response.Content);
                 if (model.result.code == 200)
@@ -119,7 +115,7 @@ namespace SendSms
             var messageId = model.items[0];
             var rest = new RestClient("https://api.ghasedak.me/v2/sms/status");
             var restRequest = new RestRequest();
-            restRequest.AddHeader("apikey", SMS_APIKEY);
+            restRequest.AddHeader("apikey", ghasedakApiKey);
             restRequest.AddParameter("id", messageId);
             restRequest.AddParameter("type", "1");
             var response = rest.Execute(restRequest);

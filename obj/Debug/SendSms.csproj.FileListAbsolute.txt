@@ -133,3 +133,17 @@ C:\Users\C2-Teacher\source\repos\SendSms\SendSms\obj\Debug\SendSms.csproj.CopyCo
 C:\Users\C2-Teacher\source\repos\SendSms\SendSms\obj\Debug\SendSms.exe
 C:\Users\C2-Teacher\source\repos\SendSms\SendSms\obj\Debug\SendSms.pdb
 C:\Users\C2-Teacher\source\repos\SendSms\SendSms\obj\Debug\SendSms.csproj.AssemblyReference.cache
+C:\Users\Student\Desktop\sendsms\bin\Debug\SendSms.exe.config
+C:\Users\Student\Desktop\sendsms\bin\Debug\SendSms.exe
+C:\Users\Student\Desktop\sendsms\bin\Debug\SendSms.pdb
+C:\Users\Student\Desktop\sendsms\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Student\Desktop\sendsms\bin\Debug\System.Buffers.dll
+C:\Users\Student\Desktop\sendsms\obj\Debug\SendSms.csproj.SuggestedBindingRedirects.cache
+C:\Users\Student\Desktop\sendsms\obj\Debug\SendSms.exe.config
+C:\Users\Student\Desktop\sendsms\obj\Debug\SendSms.Form1.resources
+C:\Users\Student\Desktop\sendsms\obj\Debug\SendSms.Properties.Resources.resources
+C:\Users\Student\Desktop\sendsms\obj\Debug\SendSms.csproj.GenerateResource.cache
+C:\Users\Student\Desktop\sendsms\obj\Debug\SendSms.csproj.CoreCompileInputs.cache
+C:\Users\Student\Desktop\sendsms\obj\Debug\SendSms.csproj.CopyComplete
+C:\Users\Student\Desktop\sendsms\obj\Debug\SendSms.exe
+C:\Users\Student\Desktop\sendsms\obj\Debug\SendSms.pdb
