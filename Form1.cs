@@ -13,10 +13,30 @@ namespace SendSms
     {
         #region Fields
 
+        /// <summary>
+        /// فیلد مر بوط به دیتا کانتکس و ارتباط با دیتابیس
+        /// </summary>
         SmsContext _conection;
+
+        /// <summary>
+        /// فیلد مربوط به ApiKey دریافتی از پنل اس ام اس
+        /// </summary>
         string ghasedakApiKey = ConfigurationManager.AppSettings.Get("GhasedakApiKey");
+
+        /// <summary>
+        /// فیلد مربوط به خط خدماتی دریافتی از سامانه پیامک
+        /// </summary>
         string lineNumber = ConfigurationManager.AppSettings.Get("LineNumber");
+
+        /// <summary>
+        /// کاراکتر تعریف شده برای جداسازی پامک ها(این فیلد ها از قسمت App.Config مقدار دهی میشوند)
+        /// </summary>
         string splitSperator = ConfigurationManager.AppSettings.Get("SpliSeperator");
+
+        /// <summary>
+        /// این فیلد مشخص میکند که پیام خط به خط ارسال بشود یا تجمیعی که به صورت true یا false در App.config تعریف میشود
+        /// </summary>
+        string useSplitSperator = ConfigurationManager.AppSettings.Get("UseSplitSeperator");
 
         #endregion
 
@@ -28,7 +48,7 @@ namespace SendSms
         private void timer1_Tick(object sender, EventArgs e)
         {
             _conection = new SmsContext();
-            var entities = _conection.SMSAlarmsSendSumms.Where(x=>!x.SMSRecievedFlag.Value).ToList();
+            var entities = _conection.SMSAlarmsSendSumms.Where(x => !x.SMSRecievedFlag.Value).ToList();
             var smsVms = new List<SmsVm>();
             foreach (var entity in entities)
             {
@@ -46,15 +66,73 @@ namespace SendSms
 
             foreach (var smsVm in smsVms)
             {
-                var messageLengtj = smsVm.Message.Length;
-                var messageArray = smsVm.Message.Split(Convert.ToChar(splitSperator));
-                foreach (var message in messageArray)
+                var messageLength = smsVm.Message.Length;
+                var messageArray = smsVm.Message.Split(Convert.ToChar(splitSperator)).ToList();
+
+                if (smsVm.Message.Length < 900)
                 {
-                    smsVm.Message = message;
                     var response = SendSMS(smsVm);
                     if (response.result.code == 200)
                     {
                         GetGhasedakStatus(response);
+                    }
+                }
+                else
+                {
+
+                    string a = "";
+                    foreach (var message in messageArray.ToList())
+                    {
+                        if (useSplitSperator == "false")
+                        {
+                            if (!string.IsNullOrWhiteSpace(message))
+                            {
+                                a += message;
+                                messageArray.Remove(message);
+                                if (a.Length > 800 && a.Length < 900)
+                                {
+                                    smsVm.Message = a;
+                                    var response = SendSMS(smsVm);
+                                    if (response.result.code == 200)
+                                    {
+                                        GetGhasedakStatus(response);
+                                    }
+                                    messageLength -= a.Length;
+                                    a = "";
+                                }
+                                else if (messageLength < 800)
+                                {
+                                    foreach(var messageOfArray in messageArray.ToList())
+                                    {
+                                        if (!string.IsNullOrWhiteSpace(messageOfArray))
+                                        {
+                                            a += messageOfArray;
+                                        }
+                                        messageArray.Remove(messageOfArray);
+                                    }
+                                    var length = a.Length;
+                                    smsVm.Message = a;
+                                    var response = SendSMS(smsVm);
+                                    if (response.result.code == 200)
+                                    {
+                                        GetGhasedakStatus(response);
+                                    }
+                                    a = "";
+                                }
+                            }
+                        }
+                        if (messageArray.Count == 0)
+                            break;
+
+                        if (useSplitSperator == "true")
+                        {
+                            smsVm.Message = message;
+                            var response = SendSMS(smsVm);
+                            if (response.result.code == 200)
+                            {
+                                GetGhasedakStatus(response);
+                            }
+                        }
                     }
                 }
             }

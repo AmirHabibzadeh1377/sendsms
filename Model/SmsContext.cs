@@ -1,14 +1,17 @@
+﻿using System.Configuration;
 using System.Data.Entity;
 
 namespace SendSms.Model
 {
     public partial class SmsContext : DbContext
     {
+        /// <summary>
+        /// اطلاعات مربوط به کانکشن استرین از فایل App.config خوانده میشه
+        /// </summary>
         public SmsContext()
-            : base("data source=DESKTOP-CPGCT09;initial catalog=SendSms;user id=sa;password=123;MultipleActiveResultSets=True;App=EntityFramework")
+            : base("name=SmsAlarmContext")
         {
         }
-
         public virtual DbSet<RunForm> RunForms { get; set; }
         public virtual DbSet<SMSAlarmsSendSumm> SMSAlarmsSendSumms { get; set; }
 
